@@ -1,7 +1,7 @@
 #!/bin/bash
 
 run_logic() {
-    if [[ "$c" == "1" ]];
+    if [[ "$c" == "search" ]];
     then
         if [[ -z "$s" ]];
         then read -r -p "Подстрока: " s; fi
@@ -14,7 +14,7 @@ run_logic() {
             echo "Не найдено"
         fi
 
-    elif [[ "$c" == "2" ]];
+    elif [[ "$c" == "slice" ]];
     then
         if [[ -z "$a" ]];
         then read -r -p "Старт: " a; fi
@@ -22,7 +22,7 @@ run_logic() {
         then read -r -p "Длина: " b; fi
         echo "${t:$a:$b}"
 
-    elif [[ "$c" == "3" ]];
+    elif [[ "$c" == "replace" ]];
     then
         if [[ -z "$s" ]];
         then read -r -p "Что: " s;
@@ -32,17 +32,17 @@ run_logic() {
         fi
         echo "${t//"$s"/"$r"}"
 
-    elif [[ "$c" == "4" ]];
+    elif [[ "$c" == "delete" ]];
     then
         if [[ -z "$d" ]];
         then
-            echo "1. Из середины"
-            echo "2. С начала"
-            echo "3. С конца"
+            echo "mid) Из середины"
+            echo "start) С начала"
+            echo "end) С конца"
             read -r -p "Выбор: " d
         fi
 
-        if [[ "$d" == "1" ]];
+        if [[ "$d" == "mid" ]];
         then
             if [[ -z "$a" ]];
             then
@@ -53,13 +53,13 @@ run_logic() {
             read -r -p "Длина: " b;
             fi
             echo "${t:0:$a}${t:$((a + b))}"
-        elif [[ "$d" == "2" ]];
+        elif [[ "$d" == "start" ]];
         then
             if [[ -z "$b" ]];
             then read -r -p "Кол-во: " b;
             fi
             echo "${t:$b}"
-        elif [[ "$d" == "3" ]];
+        elif [[ "$d" == "end" ]];
         then
             if [[ -z "$b" ]];
             then read -r -p "Кол-во: " b;
@@ -67,27 +67,27 @@ run_logic() {
             echo "${t:0:${#t}-b}"
         fi
 
-   elif [[ "$c" == "5" ]]; then
+   elif [[ "$c" == "insert" ]]; then
         if [[ -z "$d" ]]; then
-            echo "1. В начало"
-            echo "2. В конец"
-            echo "3. В определенную позицию"
+            echo "start) В начало"
+            echo "end) В конец"
+            echo "pos) В определенную позицию"
             read -r -p "Выбор: " d
         fi
 
-        if [[ "$d" == "1" ]];
+        if [[ "$d" == "start" ]];
         then
             if [[ -z "$s" ]];
             then read -r -p "Что добавить: " s;
             fi
             echo "${s}${t}"
-        elif [[ "$d" == "2" ]];
+        elif [[ "$d" == "end" ]];
         then
             if [[ -z "$s" ]];
             then read -r -p "Что добавить: " s;
             fi
             echo "${t}${s}"
-        elif [[ "$d" == "3" ]];
+        elif [[ "$d" == "pos" ]];
         then
             if [[ -z "$a" ]];
             then read -r -p "Позиция (индекс с 0): " a;
@@ -106,18 +106,26 @@ then
     c="$2"
 
        case "$c" in
-        1) s="$3" ;;
-        2) a="$3"; b="$4" ;;
-        3) s="$3"; r="$4" ;;
-        4)
+        search) s="$3" ;;
+        slice) a="$3"; b="$4" ;;
+        replace) s="$3"; r="$4" ;;
+        delete)
             d="$3"
-            if [[ "$d" == "1" ]]; then a="$4"; b="$5"; fi
-            if [[ "$d" == "2" || "$d" == "3" ]]; then b="$4"; fi
+            if [[ "$d" == "mid" ]];
+            then a="$4"; b="$5";
+             fi
+            if [[ "$d" == "start" || "$d" == "end" ]];
+             then b="$4";
+             fi
             ;;
-        5)
+        insert)
             d="$3"
-            if [[ "$d" == "1" || "$d" == "2" ]]; then s="$4"; fi
-            if [[ "$d" == "3" ]]; then a="$4"; s="$5"; fi
+            if [[ "$d" == "start" || "$d" == "end" ]];
+             then s="$4";
+             fi
+            if [[ "$d" == "pos" ]];
+             then a="$4"; s="$5";
+              fi
             ;;
     esac
 
@@ -125,11 +133,11 @@ then
     run_logic
 else
     read -r -p "Строка: " t
-    echo "1) Поиск"                                               # ==============================================================================
-    echo "2) Срез"                                                # ПЕРЕМЕННЫЕ СКРИПТА:
-    echo "3) Замена"                                              # $t — исходный текст      $c — выбор главного меню      $s — искомое слово
-    echo "4) Удаление"                                            # $apos — текст до слова   $bpos — длина текста $apos    $cpos — длина слова $s
-    echo "5) Добавление"                                          # $a — стартовая позиция   $b — количество символов      $r — новый текст
+    echo "search) Поиск"                                          # ==============================================================================
+    echo "slice) Срез"                                            # ПЕРЕМЕННЫЕ СКРИПТА:
+    echo "replace) Замена"                                        # $t — исходный текст      $c — выбор главного меню      $s — искомое слово
+    echo "delete) Удаление"                                       # $apos — текст до слова   $bpos — длина текста $apos    $cpos — длина слова $s
+    echo "insert) Добавление"                                     # $a — стартовая позиция   $b — количество символов      $r — новый текст
     read -r -p "Выбор: " c                                        # $d — вариант действия (для удаления или добавления)
                                                                   # ==============================================================================
     run_logic
