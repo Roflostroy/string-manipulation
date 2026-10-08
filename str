@@ -4,7 +4,8 @@ run_logic() {
     if [[ "$c" == "search" ]];
     then
         if [[ -z "$s" ]];
-        then read -r -p "Подстрока: " s; fi
+        then read -r -p "Подстрока: " s;
+        fi
         if [[ "$t" == *"$s"* ]];
         then
             echo "Подстрока существует"
@@ -17,9 +18,11 @@ run_logic() {
     elif [[ "$c" == "slice" ]];
     then
         if [[ -z "$a" ]];
-        then read -r -p "Старт: " a; fi
+        then read -r -p "Старт: " a;
+        fi
         if [[ -z "$b" ]];
-        then read -r -p "Длина: " b; fi
+        then read -r -p "Длина: " b;
+        fi
         echo "${t:$a:$b}"
 
     elif [[ "$c" == "replace" ]];
@@ -36,7 +39,8 @@ run_logic() {
     then
         if [[ -z "$d" ]];
         then
-            echo "mid) Из середины"
+            echo "mid) Из середины (старт и длина)"
+            echo "range) С индекса по индекс (включительно)"
             echo "start) С начала"
             echo "end) С конца"
             read -r -p "Выбор: " d
@@ -45,14 +49,22 @@ run_logic() {
         if [[ "$d" == "mid" ]];
         then
             if [[ -z "$a" ]];
-            then
-            read -r -p "Старт: " a;
+            then read -r -p "Старт: " a;
             fi
             if [[ -z "$b" ]];
-            then
-            read -r -p "Длина: " b;
+            then read -r -p "Длина: " b;
             fi
             echo "${t:0:$a}${t:$((a + b))}"
+        elif [[ "$d" == "range" ]];
+        then
+            if [[ -z "$a" ]];
+            then read -r -p "С какого символа (индекс с 0): " a;
+            fi
+            if [[ -z "$b" ]];
+            then read -r -p "По какой символ (включительно): " b;
+            fi
+            len=$((b - a + 1))
+            echo "${t:0:$a}${t:$((a + len))}"
         elif [[ "$d" == "start" ]];
         then
             if [[ -z "$b" ]];
@@ -67,8 +79,10 @@ run_logic() {
             echo "${t:0:${#t}-b}"
         fi
 
-   elif [[ "$c" == "insert" ]]; then
-        if [[ -z "$d" ]]; then
+   elif [[ "$c" == "insert" ]];
+   then
+        if [[ -z "$d" ]];
+        then
             echo "start) В начало"
             echo "end) В конец"
             echo "pos) В определенную позицию"
@@ -111,7 +125,7 @@ then
         replace) s="$3"; r="$4" ;;
         delete)
             d="$3"
-            if [[ "$d" == "mid" ]];
+            if [[ "$d" == "mid" || "$d" == "range" ]];
             then a="$4"; b="$5";
              fi
             if [[ "$d" == "start" || "$d" == "end" ]];
@@ -128,7 +142,6 @@ then
               fi
             ;;
     esac
-
 
     run_logic
 else
