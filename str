@@ -42,6 +42,7 @@ run_logic() {
             echo "mid) Из середины"
             echo "start) С начала"
             echo "end) С конца"
+            echo "range) По диапазону"
             read -r -p "Выбор: " d
         fi
 
@@ -69,6 +70,15 @@ run_logic() {
              read -r -p "Кол-во: " b;
             fi
             echo "${t:0:${#t}-b}"
+        elif [[ "$d" == "range" ]];
+        then
+            if [[ -z "$a" ]];
+            then read -r -p "Старт диапазона: " a;
+            fi
+            if [[ -z "$b" ]];
+            then read -r -p "Конец диапазона: " b;
+            fi
+            echo "${t:0:$a}${t:$b}"
         fi
 
    elif [[ "$c" == "insert" ]];
@@ -123,6 +133,9 @@ then
             if [[ "$d" == "start" || "$d" == "end" ]];
              then b="$4";
              fi
+            if [[ "$d" == "range" ]];
+             then a="$4"; b="$5";
+             fi
             ;;
         insert)
             d="$3"
@@ -139,12 +152,11 @@ then
     run_logic
 else
     read -r -p "Строка: " t
-    echo "search) Поиск"                                          # ==============================================================================
-    echo "slice) Срез"                                            # ПЕРЕМЕННЫЕ СКРИПТА:
-    echo "replace) Замена"                                        # $t — исходный текст      $c — выбор главного меню      $s — искомое слово
-    echo "delete) Удаление"                                       # $apos — текст до слова   $bpos — длина текста $apos    $cpos — длина слова $s
-    echo "insert) Добавление"                                     # $a — стартовая позиция   $b — количество символов      $r — новый текст
-    read -r -p "Выбор: " c                                        # $d — вариант действия (для удаления или добавления)
-                                                                  # ==============================================================================
+    echo "search) Поиск"
+    echo "slice) Срез"
+    echo "replace) Замена"
+    echo "delete) Удаление"
+    echo "insert) Добавление"
+    read -r -p "Выбор: " c
     run_logic
 fi
